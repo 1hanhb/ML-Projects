@@ -1,9 +1,8 @@
 import tensorflow
 import pandas
-import FirebaseDatabase
+import TFProjects.HomeCare.FirebaseDatabase as FirebaseDatabase
 import numpy
 import matplotlib.pyplot
-
 
 #############################################
 # UserClassifier.py
@@ -25,8 +24,8 @@ inputX = dataframe.loc[:, ['exceededPayments', 'homecareCount', 'star', 'suspens
 inputY = dataframe.loc[:, ['type0', 'type1']].as_matrix() #userType이 0에 가까울 수록 일반 유저, 1에 가까울 수록 비정상 유저
 
 # -> 따라서
-print(inputX)
-print(inputY)
+# print(inputX)
+# print(inputY)
 
 #파라미터 정의
 learningRate = 0.000001 #데이터셋 크기가 작기 때문에, 정확도 향상을 위해 낮게 설정
@@ -55,15 +54,16 @@ init = tensorflow.initialize_all_variables()
 session = tensorflow.Session()
 session.run(init)
 
+print("Training...")
 for i in range(iteration): #train loop를 iteration만큼 돔
      session.run(optimizer,feed_dict={x:inputX, y_:inputY})
-     if i%100 == 0:
-         print ("cost : ", "{:.9f}".format(session.run(cost, feed_dict={x: inputX, y_: inputY})))
+     # if i%100 == 0:
+     #     print ("cost : ", "{:.9f}".format(session.run(cost, feed_dict={x: inputX, y_: inputY})))
 
 #output
 #0 비정상
 #1 정상
-print(session.run(y, feed_dict= {x: inputX}))
+# print(session.run(y, feed_dict= {x: inputX}))
 
 prediction = tensorflow.argmax(y, 1)
 target = tensorflow.argmax(y_, 1)
@@ -85,6 +85,13 @@ def printTrainingResult():
     accuracy = tensorflow.reduce_mean(tensorflow.cast(is_correct, tensorflow.float32))
     print("정확도 : ", session.run(accuracy * 100, feed_dict={x: inputX, y_: inputY}), "%")
 
+def refresh():
+    FirebaseDatabase.refresh()
 
 def predict():
     print("사용자 예측을 시작합니다.")
+    print("유저 리스트")
+    FirebaseDatabase.printUsers()
+    prediction = tensorflow.argmax(y, 1)
+    pre = session.run(prediction, feed_dict={x:FirebaseDatabase.inputData})
+    print("예측 : ", pre)
