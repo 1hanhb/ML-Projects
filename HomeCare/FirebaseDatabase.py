@@ -19,6 +19,7 @@ def refresh() :
     dataframe = pandas.DataFrame(list(users.items()))
     inputData = pandas.DataFrame(list(dataframe[1])).loc[:, ['exceededPayments', 'homecareCount', 'star', 'suspensions']].as_matrix() #예측에 쓰일 유저데이터
     uids = list(dataframe[0])
+    printUsers()
 
 
 def printUsers() :

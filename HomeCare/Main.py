@@ -8,6 +8,7 @@ from tkinter import *
 # III. 유저 데이터를 데이터프레임으로 파싱한다.
 # IV. 예측 후 예측 값을 디비에 갱신한다
 #############################################
+classifier.printTrainingResult()
 
 window = Tk()
 window.title("HomeCare")
@@ -16,13 +17,11 @@ lblTitle = Label(window, text=" HomeCare User Classifier ")
 
 btnPredict = Button(window, text="유저 분류하기",command=classifier.predict)
 btnRefresh = Button(window, text="유저 다시 받아오기", command = classifier.refresh)
-btnAdd = Button(window, text="받아온 유저 트레이닝셋에 추가시키기")
-btnAutoRun = Button(window, text="Auto Run (주기 : 1 hour)")
-
+btnAutoRun = Button(window, text="Auto Run (주기 : 1 hour)", command = classifier.autorun)
 
 lblTitle.pack(pady=10, padx=30)
 btnPredict.pack(pady=10, padx=30)
 btnRefresh.pack(pady=10, padx=30)
-btnAdd.pack(pady=10, padx=30)
 btnAutoRun.pack(pady=10, padx=30)
+
 window.mainloop()

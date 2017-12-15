@@ -15,6 +15,8 @@ import matplotlib.pyplot
 #initialization
 #################################################################
 
+pandas.set_option('display.width', 500)
+
 #데이터 불러오기
 dataframe = pandas.read_csv("dataset.csv") #사전 데이터셋
 dataframe = dataframe.drop(['uid'],axis=1)
@@ -79,8 +81,8 @@ print("초기화 성공!")
 
 def printTrainingResult():
     print("[Training set 예측 결과]")
-    print("예측 : ", pre)
-    print("실제 : ", tar)
+    # print("예측 : ", pre)
+    # print("실제 : ", tar)
     is_correct = tensorflow.equal(prediction, target)
     accuracy = tensorflow.reduce_mean(tensorflow.cast(is_correct, tensorflow.float32))
     print("정확도 : ", session.run(accuracy * 100, feed_dict={x: inputX, y_: inputY}), "%")
@@ -94,4 +96,18 @@ def predict():
     FirebaseDatabase.printUsers()
     prediction = tensorflow.argmax(y, 1)
     pre = session.run(prediction, feed_dict={x:FirebaseDatabase.inputData})
-    print("예측 : ", pre)
+    print("예측 :", pre)
+    abnUserLists = []
+    for i in range(len(pre)) :
+        if pre[i] == 1 : #비정상인 경우
+            abnUserLists.append(pandas.DataFrame(list(FirebaseDatabase.dataframe[1])).loc[:, 'uid'][i])
+    print("비정상 유저 :",abnUserLists)
+    FirebaseDatabase.writeAbnormalUsers(abnUserLists)
+
+def autorun():
+    import time
+    while True :
+        time.sleep(60*60)
+        refresh()
+        predict()
+
